@@ -512,12 +512,15 @@ footer {
     min-width: 0;
     border-radius: 18px;
   }
+  .hero-content {
+    padding: 0 1.5rem;
+  }
   .hero-content h1 {
     font-size: 2.1rem;
   }
   .hero-desc {
     font-size: 1rem;
-    padding: 0 1rem;
+    padding: 0;
   }
   .stats {
     flex-wrap: wrap;
@@ -526,6 +529,7 @@ footer {
   .trust-content {
     gap: 1.1rem;
     font-size: 0.98rem;
+    padding-right: 1rem;
   }
   .chat-header, .chat-messages, .chat-input-area {
     padding-left: 1rem;
@@ -536,6 +540,12 @@ footer {
   .hero-section {
     padding-top: 2rem;
     padding-bottom: 1rem;
+  }
+  .hero-content h1 {
+    font-size: 1.9rem;
+  }
+  .subtitle {
+    font-size: 1.1rem;
   }
   .chat-container.glass {
     min-width: 0;
