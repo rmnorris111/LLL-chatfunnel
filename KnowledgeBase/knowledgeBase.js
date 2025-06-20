@@ -1,5 +1,5 @@
 // knowledgeBase.js
-window.knowledgeBase = `
+export default `
 # Limited Licence Lawyer: Background and Mission
 
 ## Overview

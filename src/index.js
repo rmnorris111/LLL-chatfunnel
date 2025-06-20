@@ -1,4 +1,6 @@
 // src/index.js
+import systemPrompt from '../limited_licence_chatbot_prompt.md';
+import knowledgeBase from '../KnowledgeBase/knowledgeBase.js';
 
 // Define a list of allowed origins.
 const allowedOrigins = [
@@ -16,10 +18,8 @@ export default {
       ...(isAllowed && { 'Access-Control-Allow-Origin': origin }),
     };
 
-    // env.OPENAI_API_KEY, env.SYSTEM_PROMPT, and env.KNOWLEDGE_BASE are available here
+    // env.OPENAI_API_KEY is available here
     const apiKey = env.OPENAI_API_KEY;
-    const systemPrompt = env.SYSTEM_PROMPT;
-    const knowledgeBase = env.KNOWLEDGE_BASE;
 
     // Handle CORS preflight requests
     if (request.method === "OPTIONS") {
