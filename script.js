@@ -29,7 +29,7 @@ function addMessage(text, sender = 'bot') {
   avatar.textContent = sender === 'bot' ? 'LL' : 'You';
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  bubble.textContent = text;
+  bubble.innerHTML = text;
   messageDiv.appendChild(avatar);
   messageDiv.appendChild(bubble);
   chatMessages.appendChild(messageDiv);
