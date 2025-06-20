@@ -1,7 +1,21 @@
 // src/index.js
 
+// Define a list of allowed origins.
+const allowedOrigins = [
+  'https://lll-chatfunnel.pages.dev',
+  // You can add your local development URL here if needed, e.g., 'http://127.0.0.1:8788'
+];
+
 export default {
   async fetch(request, env, ctx) {
+    const origin = request.headers.get('Origin');
+    const isAllowed = allowedOrigins.includes(origin);
+    const corsHeaders = {
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      ...(isAllowed && { 'Access-Control-Allow-Origin': origin }),
+    };
+
     // env.OPENAI_API_KEY, env.SYSTEM_PROMPT, and env.KNOWLEDGE_BASE are available here
     const apiKey = env.OPENAI_API_KEY;
     const systemPrompt = env.SYSTEM_PROMPT;
@@ -10,11 +24,7 @@ export default {
     // Handle CORS preflight requests
     if (request.method === "OPTIONS") {
       return new Response(null, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-        },
+        headers: corsHeaders,
       });
     }
 
@@ -32,17 +42,26 @@ export default {
         return new Response(JSON.stringify({ reply: responseFromAI }), {
           headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            ...corsHeaders,
           },
         });
 
       } catch (error) {
         console.error("Error processing request:", error);
-        return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
+        });
       }
     }
 
-    return new Response("Please send a POST request.", { status: 405 });
+    return new Response("Please send a POST request.", {
+      status: 405,
+      headers: corsHeaders,
+    });
   },
 };
 
