@@ -175,11 +175,8 @@ async function getAIResponse() {
 function startConversation() {
   chatMessages.innerHTML = '';
   conversationHistory = []; // Clear history
-  
-  // Start the conversation with an initial prompt to the AI
-  // The user won't see this, but it kicks off the AI's first message.
-  conversationHistory.push({ role: 'user', content: "G'day" });
-  handleUserInput(null); // Pass null to signify no user input bubble
+  const initialMessage = "Hello! 👋 I can help you with limited licence applications - whether you're eligible, what the process involves, costs, and what documents you'll need. What's your situation?";
+  addMessage(initialMessage, 'bot');
 }
 
 chatForm.addEventListener('submit', e => {
