@@ -37,7 +37,8 @@ function addMessage(text, sender = 'bot') {
 
   // Add message to history for the AI
   if (sender !== 'options') {
-    conversationHistory.push({ role: sender, content: text });
+    const role = sender === 'bot' ? 'assistant' : 'user';
+    conversationHistory.push({ role, content: text });
   }
 }
 
