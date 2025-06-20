@@ -37,6 +37,7 @@ function addMessage(text, sender = 'bot') {
   // New primary placeholders
   html = html.replace(/\[ACTION_BOOK_CALL\]/g, bookCallButton);
   html = html.replace(/\[ACTION_START_APP\]/g, startAppButton);
+  html = html.replace(/\[START MY APPLICATION ONLINE\]/g, startAppButton);
 
   // Old fallbacks just in case
   html = html.replace(/\[INSERT CALENDLY LINK\]/g, bookCallButton);
