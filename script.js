@@ -143,9 +143,27 @@ async function handleUserInput(input) {
     const placeholders = cleanResponse.match(placeholderRegex);
     const nonPlaceholderText = cleanResponse.replace(placeholderRegex, '').trim();
 
+    // Fallback triggers for starting application
+    const startAppTriggers = [
+      "ready to proceed",
+      "start your application",
+      "begin the process",
+      "here's what you need to do next",
+      "file your application",
+      "start your limited licence application online",
+      "begin your application online",
+      "proceed with the application"
+    ];
+
     if (placeholders && !nonPlaceholderText) {
       // Response contains only one or more placeholders, render as standalone buttons
       addActionButtons(placeholders);
+    } else if (
+      startAppTriggers.some(trigger => cleanResponse.toLowerCase().includes(trigger)) &&
+      !(cleanResponse.includes('[ACTION_START_APP]'))
+    ) {
+      // Fallback: show the Start Application button if trigger phrases are present
+      addActionButtons(['[ACTION_START_APP]']);
     } else {
       // Response contains text, render it inside a bubble (with inline button replacement)
       addMessage(aiResponse, 'bot');
