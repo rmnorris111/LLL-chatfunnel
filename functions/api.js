@@ -10,8 +10,48 @@ const allowedOrigins = [
   // You can add your local development URL here if needed, e.g., 'http://127.0.0.1:8788'
 ];
 
-export default {
-  async fetch(request, env, ctx) {
+// This is the specific handler for POST requests in Pages Functions.
+export async function onRequestPost({ request, env }) {
+  const origin = request.headers.get('Origin');
+  const isAllowed = allowedOrigins.includes(origin);
+  const corsHeaders = {
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    ...(isAllowed && { 'Access-Control-Allow-Origin': origin }),
+  };
+
+  const apiKey = env.OPENAI_API_KEY;
+
+  try {
+    const { messages } = await request.json();
+
+    if (!apiKey) {
+      throw new Error("OPENAI_API_KEY is not configured.");
+    }
+
+    const responseFromAI = await callOpenAI(messages, systemPrompt, knowledgeBase, apiKey);
+
+    return new Response(JSON.stringify({ reply: responseFromAI }), {
+      headers: {
+        'Content-Type': 'application/json',
+        ...corsHeaders,
+      },
+    });
+
+  } catch (error) {
+    console.error("Error processing request:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: {
+        'Content-Type': 'application/json',
+        ...corsHeaders,
+      },
+    });
+  }
+}
+
+// Handle CORS preflight requests for the /api endpoint
+export async function onRequestOptions({ request }) {
     const origin = request.headers.get('Origin');
     const isAllowed = allowedOrigins.includes(origin);
     const corsHeaders = {
@@ -20,52 +60,10 @@ export default {
       ...(isAllowed && { 'Access-Control-Allow-Origin': origin }),
     };
 
-    // env.OPENAI_API_KEY is available here
-    const apiKey = env.OPENAI_API_KEY;
-
-    // Handle CORS preflight requests
-    if (request.method === "OPTIONS") {
-      return new Response(null, {
-        headers: corsHeaders,
-      });
-    }
-
-    // Handle chat requests
-    if (request.method === "POST") {
-      try {
-        const { messages } = await request.json(); // Expecting an array of messages
-
-        if (!apiKey) {
-          throw new Error("OPENAI_API_KEY is not configured.");
-        }
-
-        const responseFromAI = await callOpenAI(messages, systemPrompt, knowledgeBase, apiKey);
-
-        return new Response(JSON.stringify({ reply: responseFromAI }), {
-          headers: {
-            'Content-Type': 'application/json',
-            ...corsHeaders,
-          },
-        });
-
-      } catch (error) {
-        console.error("Error processing request:", error);
-        return new Response(JSON.stringify({ error: error.message }), {
-          status: 400,
-          headers: {
-            'Content-Type': 'application/json',
-            ...corsHeaders,
-          },
-        });
-      }
-    }
-
-    return new Response("Please send a POST request.", {
-      status: 405,
+    return new Response(null, {
       headers: corsHeaders,
     });
-  },
-};
+}
 
 /**
  * Calls the OpenAI API with the user's message history and the knowledge base.
