@@ -35,11 +35,14 @@ function addMessage(text, sender = 'bot') {
   const bookCallButton = `<button class="action-btn" onclick="window.open('${BOOKING_LINK}', '_blank')">Book Free Call</button>`;
   const startAppButton = `<button class="action-btn" onclick="window.open('${APPLICATION_LINK}', '_blank')">Start Application Online</button>`;
 
-  // New primary placeholders
-  html = html.replace(/\[ACTION_BOOK_CALL\]/g, bookCallButton);
-  html = html.replace(/\[ACTION_START_APP\]/g, startAppButton);
-  html = html.replace(/\[START MY APPLICATION ONLINE\]/g, startAppButton);
+  // Regex to catch all possible placeholder variations
+  const bookCallRegex = /\[(ACTION_BOOK_CALL|FREE CONSULTATION CALL)\]/g;
+  const startAppRegex = /\[(ACTION_START_APP|START APPLICATION ONLINE)\]/g;
 
+  // New primary placeholders
+  html = html.replace(bookCallRegex, bookCallButton);
+  html = html.replace(startAppRegex, startAppButton);
+  
   // Old fallbacks just in case
   html = html.replace(/\[INSERT CALENDLY LINK\]/g, bookCallButton);
   html = html.replace(/\[INSERT APPLICATION LINK\]/g, startAppButton);
@@ -72,12 +75,12 @@ function addActionButtons(placeholders) {
   // allow for multiple buttons in the future
   placeholders.forEach(placeholder => {
     let button;
-    if (placeholder === '[ACTION_BOOK_CALL]') {
+    if (placeholder.includes('ACTION_BOOK_CALL') || placeholder.includes('FREE CONSULTATION CALL')) {
         button = document.createElement('button');
         button.className = 'action-btn';
         button.textContent = 'Book Free Call';
         button.onclick = () => window.open(BOOKING_LINK, '_blank');
-    } else if (placeholder === '[ACTION_START_APP]') {
+    } else if (placeholder.includes('ACTION_START_APP') || placeholder.includes('START APPLICATION ONLINE')) {
         button = document.createElement('button');
         button.className = 'action-btn';
         button.textContent = 'Start Application Online';
@@ -136,7 +139,7 @@ async function handleUserInput(input) {
     const cleanResponse = aiResponse.trim();
     
     // Check if the response contains ONLY placeholders
-    const placeholderRegex = /(\[ACTION_BOOK_CALL\]|\[ACTION_START_APP\])/g;
+    const placeholderRegex = /\[(ACTION_BOOK_CALL|FREE CONSULTATION CALL|ACTION_START_APP|START APPLICATION ONLINE)\]/g;
     const placeholders = cleanResponse.match(placeholderRegex);
     const nonPlaceholderText = cleanResponse.replace(placeholderRegex, '').trim();
 
