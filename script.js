@@ -2,7 +2,7 @@
 
 // --- CONFIGURATION ---
 // Replace this with your deployed Cloudflare Worker URL
-const WORKER_URL = 'https://limited-licence-chatbot.rion-norris.workers.dev'; 
+const WORKER_URL = '/api';
 const BOOKING_LINK = 'https://calendly.com/rionnorris/15min';
 const APPLICATION_LINK = 'https://app.gavel.io/workflow/69791b41-a6c3-4c91-90a8-376c33c1ca91/intake';
 
