@@ -55,6 +55,40 @@ function addMessage(text, sender = 'bot') {
   }
 }
 
+function addActionButtons(placeholders) {
+  const actionsContainer = document.createElement('div');
+  actionsContainer.className = 'message bot'; // Align like a bot message
+
+  const avatar = document.createElement('span');
+  avatar.className = 'avatar';
+  avatar.textContent = 'LL';
+  actionsContainer.appendChild(avatar);
+  
+  const buttonWrapper = document.createElement('div');
+  buttonWrapper.className = 'actions-wrapper'; // A wrapper for the buttons
+
+  // allow for multiple buttons in the future
+  placeholders.forEach(placeholder => {
+    let button;
+    if (placeholder === '[ACTION_BOOK_CALL]') {
+        button = document.createElement('button');
+        button.className = 'action-btn';
+        button.textContent = 'Book Free Call';
+        button.onclick = () => window.open(CALENDLY_LINK, '_blank');
+    } else if (placeholder === '[ACTION_START_APP]') {
+        button = document.createElement('button');
+        button.className = 'action-btn';
+        button.textContent = 'Start Application Online';
+        button.onclick = () => window.open(GAVEL_LINK, '_blank');
+    }
+    if(button) buttonWrapper.appendChild(button);
+  });
+  
+  actionsContainer.appendChild(buttonWrapper);
+  chatMessages.appendChild(actionsContainer);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
 function addOptions(options) {
   const optionsDiv = document.createElement('div');
   optionsDiv.className = 'options';
@@ -94,13 +128,19 @@ async function handleUserInput(input) {
     const aiResponse = await getAIResponse();
     showTypingIndicator(false);
 
-    // The AI might return structured data for options/links
-    // This is a simple implementation; a more robust one would parse JSON
-    if (aiResponse.includes("start my application online")) {
-        addMessage("It sounds like you're ready to proceed. You can start your application online here, or book a free call if you have more questions.", 'bot');
-        showConversionOptions();
+    const cleanResponse = aiResponse.trim();
+    
+    // Check if the response contains ONLY placeholders
+    const placeholderRegex = /(\[ACTION_BOOK_CALL\]|\[ACTION_START_APP\])/g;
+    const placeholders = cleanResponse.match(placeholderRegex);
+    const nonPlaceholderText = cleanResponse.replace(placeholderRegex, '').trim();
+
+    if (placeholders && !nonPlaceholderText) {
+      // Response contains only one or more placeholders, render as standalone buttons
+      addActionButtons(placeholders);
     } else {
-        addMessage(aiResponse, 'bot');
+      // Response contains text, render it inside a bubble (with inline button replacement)
+      addMessage(aiResponse, 'bot');
     }
 
   } catch (error) {
@@ -127,10 +167,6 @@ async function getAIResponse() {
 
     const data = await response.json();
     return data.reply;
-}
-
-function showConversionOptions() {
-  conversionOptions.style.display = 'flex';
 }
 
 function startConversation() {
