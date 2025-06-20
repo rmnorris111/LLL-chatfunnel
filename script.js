@@ -3,8 +3,8 @@
 // --- CONFIGURATION ---
 // Replace this with your deployed Cloudflare Worker URL
 const WORKER_URL = 'https://limited-licence-chatbot.rion-norris.workers.dev'; 
-const CALENDLY_LINK = 'https://calendly.com/rionnorris/15min';
-const GAVEL_LINK = 'https://thedisputelawyer.gavel.io/start/playground2/Limited%20Licence%20Application%20Lawyer%20Review';
+const BOOKING_LINK = 'https://calendly.com/rionnorris/15min';
+const APPLICATION_LINK = 'https://app.gavel.io/workflow/69791b41-a6c3-4c91-90a8-376c33c1ca91/intake';
 
 const chatMessages = document.getElementById('chat-messages');
 const chatForm = document.getElementById('chat-form');
@@ -17,6 +17,7 @@ const bookConsultationBtn = document.getElementById('book-consultation');
 
 // Conversation state
 let conversationHistory = [];
+let isAwaitingResponse = false;
 
 // --- REMOVED PREDEFINED FUNNEL ---
 // The conversation is now dynamic and handled by the AI.
@@ -31,8 +32,8 @@ function addMessage(text, sender = 'bot') {
   bubble.className = 'bubble';
   
   let html = marked.parse(text);
-  const bookCallButton = `<button class="action-btn" onclick="window.open('${CALENDLY_LINK}', '_blank')">Book Free Call</button>`;
-  const startAppButton = `<button class="action-btn" onclick="window.open('${GAVEL_LINK}', '_blank')">Start Application Online</button>`;
+  const bookCallButton = `<button class="action-btn" onclick="window.open('${BOOKING_LINK}', '_blank')">Book Free Call</button>`;
+  const startAppButton = `<button class="action-btn" onclick="window.open('${APPLICATION_LINK}', '_blank')">Start Application Online</button>`;
 
   // New primary placeholders
   html = html.replace(/\[ACTION_BOOK_CALL\]/g, bookCallButton);
@@ -41,7 +42,7 @@ function addMessage(text, sender = 'bot') {
 
   // Old fallbacks just in case
   html = html.replace(/\[INSERT CALENDLY LINK\]/g, bookCallButton);
-  html = html.replace(/\[INSERT GAVEL LINK\]/g, startAppButton);
+  html = html.replace(/\[INSERT APPLICATION LINK\]/g, startAppButton);
 
   bubble.innerHTML = html;
   messageDiv.appendChild(avatar);
@@ -75,12 +76,12 @@ function addActionButtons(placeholders) {
         button = document.createElement('button');
         button.className = 'action-btn';
         button.textContent = 'Book Free Call';
-        button.onclick = () => window.open(CALENDLY_LINK, '_blank');
+        button.onclick = () => window.open(BOOKING_LINK, '_blank');
     } else if (placeholder === '[ACTION_START_APP]') {
         button = document.createElement('button');
         button.className = 'action-btn';
         button.textContent = 'Start Application Online';
-        button.onclick = () => window.open(GAVEL_LINK, '_blank');
+        button.onclick = () => window.open(APPLICATION_LINK, '_blank');
     }
     if(button) buttonWrapper.appendChild(button);
   });
@@ -188,10 +189,10 @@ chatForm.addEventListener('submit', e => {
 });
 
 startApplicationBtn.onclick = () => {
-  window.open(GAVEL_LINK, '_blank');
+  window.open(APPLICATION_LINK, '_blank');
 };
 bookConsultationBtn.onclick = () => {
-  window.open(CALENDLY_LINK, '_blank');
+  window.open(BOOKING_LINK, '_blank');
 };
 
 // On load
