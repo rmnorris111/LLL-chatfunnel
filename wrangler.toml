@@ -1,0 +1,11 @@
+name = "limited-licence-chatbot"
+main = "src/index.js"
+compatibility_date = "2023-11-21"
+
+# Bind the content of the markdown and js files to variables accessible in the worker.
+# This makes the knowledge base and system prompt available to the AI.
+[vars]
+SYSTEM_PROMPT = { file = "limited_licence_chatbot_prompt.md" }
+KNOWLEDGE_BASE = { file = "KnowledgeBase/knowledgeBase.js" }
+# You can put non-secret variables here if needed
+# EXAMPLE_VARIABLE = "some-value" 

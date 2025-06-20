@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Terms - Limited Licence Lawyer NZ</title>
+  <link rel="stylesheet" href="privacy.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div id="terms-content"></div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('WebsiteTerms.md')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('WebsiteTerms.md not found');
+          }
+          return response.text();
+        })
+        .then(text => {
+          if (!text.trim()) {
+            document.getElementById('terms-content').innerHTML = '<h1>Website Terms</h1><p>The website terms are not yet available. Please check back later.</p>';
+            return;
+          }
+          const converter = new showdown.Converter();
+          const html = converter.makeHtml(text);
+          document.getElementById('terms-content').innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error fetching terms:', error);
+          document.getElementById('terms-content').innerHTML = '<h1>Error</h1><p>Could not load the website terms. Please try again later.</p>';
+        });
+    });
+  </script>
+</body>
+</html> 

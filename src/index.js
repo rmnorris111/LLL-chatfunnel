@@ -1,0 +1,92 @@
+// src/index.js
+
+export default {
+  async fetch(request, env, ctx) {
+    // env.OPENAI_API_KEY, env.SYSTEM_PROMPT, and env.KNOWLEDGE_BASE are available here
+    const apiKey = env.OPENAI_API_KEY;
+    const systemPrompt = env.SYSTEM_PROMPT;
+    const knowledgeBase = env.KNOWLEDGE_BASE;
+
+    // Handle CORS preflight requests
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
+      });
+    }
+
+    // Handle chat requests
+    if (request.method === "POST") {
+      try {
+        const { messages } = await request.json(); // Expecting an array of messages
+
+        if (!apiKey) {
+          throw new Error("OPENAI_API_KEY is not configured.");
+        }
+
+        const responseFromAI = await callOpenAI(messages, systemPrompt, knowledgeBase, apiKey);
+
+        return new Response(JSON.stringify({ reply: responseFromAI }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+        });
+
+      } catch (error) {
+        console.error("Error processing request:", error);
+        return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+      }
+    }
+
+    return new Response("Please send a POST request.", { status: 405 });
+  },
+};
+
+/**
+ * Calls the OpenAI API with the user's message history and the knowledge base.
+ * @param {Array} messages - The chat history between the user and the AI.
+ * @param {string} systemPrompt - The initial system prompt.
+ * @param {string} knowledgeBase - The knowledge base content.
+ * @param {string} apiKey - The OpenAI API key.
+ * @returns {string} The AI's response message.
+ */
+async function callOpenAI(messages, systemPrompt, knowledgeBase, apiKey) {
+  // Combine the knowledge base with the system prompt
+  const fullSystemPrompt = `${systemPrompt}\n\nHere is the knowledge base you must use to answer questions:\n\n${knowledgeBase}`;
+
+  const body = {
+    model: "gpt-4-turbo",
+    messages: [
+      { role: "system", content: fullSystemPrompt },
+      ...messages // Add the existing conversation history
+    ],
+    max_tokens: 1024,
+    temperature: 0.2,
+  };
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`OpenAI API error: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+
+  const data = await response.json();
+
+  if (!data.choices || data.choices.length === 0) {
+      throw new Error("Invalid response structure from OpenAI API.");
+  }
+
+  return data.choices[0].message.content;
+} 

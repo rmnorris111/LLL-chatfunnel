@@ -1,0 +1,7 @@
+# Cloudflare
+.wrangler/
+node_modules/
+
+# Secrets
+.env
+*.pem 
