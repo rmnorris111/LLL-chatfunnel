@@ -5,6 +5,7 @@ import knowledgeBase from '../KnowledgeBase/knowledgeBase.js';
 // Define a list of allowed origins.
 const allowedOrigins = [
   'https://lll-chatfunnel.pages.dev',
+  'https://ai.limitedlicencelawyer.co.nz',
   // You can add your local development URL here if needed, e.g., 'http://127.0.0.1:8788'
 ];
 
