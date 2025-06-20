@@ -120,8 +120,11 @@ async function handleUserInput(input) {
   const lastOptions = chatMessages.querySelector('.options');
   if (lastOptions) lastOptions.remove();
 
-  addMessage(input, 'user');
-  clearInput();
+  if (input) { // only add a user message if there is input
+    addMessage(input, 'user');
+    clearInput();
+  }
+  
   showTypingIndicator(true);
 
   try {
@@ -172,20 +175,11 @@ async function getAIResponse() {
 function startConversation() {
   chatMessages.innerHTML = '';
   conversationHistory = []; // Clear history
-  showTypingIndicator(true);
   
   // Start the conversation with an initial prompt to the AI
   // The user won't see this, but it kicks off the AI's first message.
   conversationHistory.push({ role: 'user', content: "G'day" });
-  
-  getAIResponse().then(initialMessage => {
-    showTypingIndicator(false);
-    addMessage(initialMessage, 'bot');
-  }).catch(error => {
-    showTypingIndicator(false);
-    addMessage("Welcome! I seem to be having a small issue starting up. Please refresh the page.", 'bot');
-    console.error(error);
-  });
+  handleUserInput(null); // Pass null to signify no user input bubble
 }
 
 chatForm.addEventListener('submit', e => {

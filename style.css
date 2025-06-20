@@ -311,7 +311,7 @@ main {
 }
 
 .chat-input-area {
-  padding: 0.7rem 2.5rem 1.5rem 2.5rem;
+  padding: 0.7rem 1rem;
   background: none;
   display: flex;
   flex-direction: column;
