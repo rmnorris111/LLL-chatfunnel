@@ -2,8 +2,8 @@ name = "limited-licence-chatbot"
 main = "src/index.js"
 compatibility_date = "2023-11-21"
 
-# Configure a build rule to handle .md files as plain text.
-[[build.rules]]
+# Define a module rule to handle .md files as plain text.
+[[rules]]
 type = "Text"
 globs = ["**/*.md"]
 
