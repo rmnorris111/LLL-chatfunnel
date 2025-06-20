@@ -129,7 +129,27 @@ async function handleUserInput(input) {
     addMessage(input, 'user');
     clearInput();
   }
-  
+
+  // User-input-based fallback for start application
+  const userTriggers = [
+    "let's do it",
+    "start online",
+    "start my application",
+    "apply online",
+    "begin application",
+    "yes",
+    "yes please",
+    "proceed",
+    "continue",
+    "get started"
+  ];
+  if (
+    userTriggers.some(trigger => input.toLowerCase().includes(trigger))
+  ) {
+    addActionButtons(['[ACTION_START_APP]']);
+    return;
+  }
+
   showTypingIndicator(true);
 
   try {
