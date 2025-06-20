@@ -29,7 +29,10 @@ function addMessage(text, sender = 'bot') {
   avatar.textContent = sender === 'bot' ? 'LL' : 'You';
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  bubble.innerHTML = marked.parse(text);
+  let html = marked.parse(text);
+  html = html.replace(/\[CALENDLY_LINK\]/g, CALENDLY_LINK);
+  html = html.replace(/\[GAVEL_LINK\]/g, GAVEL_LINK);
+  bubble.innerHTML = html;
   messageDiv.appendChild(avatar);
   messageDiv.appendChild(bubble);
   chatMessages.appendChild(messageDiv);

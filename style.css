@@ -547,3 +547,18 @@ footer {
     padding: 0.5rem 0;
   }
 }
+
+.action-btn {
+  background: #2d72d9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  margin: 8px 4px 0 0;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.action-btn:hover {
+  background: #174ea6;
+}
