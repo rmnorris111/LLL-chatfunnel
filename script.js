@@ -29,9 +29,19 @@ function addMessage(text, sender = 'bot') {
   avatar.textContent = sender === 'bot' ? 'LL' : 'You';
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
+  
   let html = marked.parse(text);
-  html = html.replace(/\[INSERT CALENDLY LINK\]/g, `<button class="action-btn" onclick="window.open('${CALENDLY_LINK}', '_blank')">Book Free Call</button>`);
-  html = html.replace(/\[INSERT GAVEL LINK\]/g, `<button class="action-btn" onclick="window.open('${GAVEL_LINK}', '_blank')">Start Application Online</button>`);
+  const bookCallButton = `<button class="action-btn" onclick="window.open('${CALENDLY_LINK}', '_blank')">Book Free Call</button>`;
+  const startAppButton = `<button class="action-btn" onclick="window.open('${GAVEL_LINK}', '_blank')">Start Application Online</button>`;
+
+  // New primary placeholders
+  html = html.replace(/\[ACTION_BOOK_CALL\]/g, bookCallButton);
+  html = html.replace(/\[ACTION_START_APP\]/g, startAppButton);
+
+  // Old fallbacks just in case
+  html = html.replace(/\[INSERT CALENDLY LINK\]/g, bookCallButton);
+  html = html.replace(/\[INSERT GAVEL LINK\]/g, startAppButton);
+
   bubble.innerHTML = html;
   messageDiv.appendChild(avatar);
   messageDiv.appendChild(bubble);
