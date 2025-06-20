@@ -78,7 +78,7 @@ async function callOpenAI(messages, systemPrompt, knowledgeBase, apiKey) {
   const fullSystemPrompt = `${systemPrompt}\n\nHere is the knowledge base you must use to answer questions:\n\n${knowledgeBase}`;
 
   const body = {
-    model: "gpt-4-turbo",
+    model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: fullSystemPrompt },
       ...messages // Add the existing conversation history
