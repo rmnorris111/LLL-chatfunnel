@@ -300,7 +300,7 @@ main {
   margin-right: 0;
 }
 .message.user .bubble {
-  background-color: #2d72d9;
+  background-color: #181a20;
   color: #fff;
   border: 1.5px solid #23272f;
   margin-right: 0;
@@ -548,18 +548,22 @@ footer {
 }
 
 .action-btn {
-  background: #2d72d9;
+  background: linear-gradient(135deg, #2563eb 0%, #1fc8db 100%);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 10px 18px;
-  margin: 8px 4px 0 0;
-  font-size: 1rem;
+  border-radius: 18px;
+  padding: 0.8rem 1.5rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.15s;
+  font-family: 'Poppins', Arial, sans-serif;
+  box-shadow: 0 2px 8px #0002;
+  margin: 4px 0;
 }
 .action-btn:hover {
-  background: #174ea6;
+  background: linear-gradient(135deg, #1fc8db 0%, #2563eb 100%);
+  transform: scale(1.04);
 }
 
 .actions-wrapper {
