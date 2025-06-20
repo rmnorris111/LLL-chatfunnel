@@ -30,8 +30,8 @@ function addMessage(text, sender = 'bot') {
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   let html = marked.parse(text);
-  html = html.replace(/\[CALENDLY_LINK\]/g, CALENDLY_LINK);
-  html = html.replace(/\[GAVEL_LINK\]/g, GAVEL_LINK);
+  html = html.replace(/\[INSERT CALENDLY LINK\]/g, `<button class="action-btn" onclick="window.open('${CALENDLY_LINK}', '_blank')">Book Free Call</button>`);
+  html = html.replace(/\[INSERT GAVEL LINK\]/g, `<button class="action-btn" onclick="window.open('${GAVEL_LINK}', '_blank')">Start Application Online</button>`);
   bubble.innerHTML = html;
   messageDiv.appendChild(avatar);
   messageDiv.appendChild(bubble);
