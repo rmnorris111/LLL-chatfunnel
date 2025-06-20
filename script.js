@@ -139,39 +139,11 @@ function startConversation() {
   });
 }
 
-function searchKnowledgeBase(query) {
-  if (!window.knowledgeBase) return null;
-  const lower = query.toLowerCase();
-  // Split into paragraphs/sections for searching
-  const sections = window.knowledgeBase.split(/\n{2,}/);
-  // Try to find a section that matches the query
-  for (const section of sections) {
-    if (section.toLowerCase().includes(lower)) {
-      // Return the first matching section, trimmed
-      return section.trim();
-    }
-  }
-  return null;
-}
-
 chatForm.addEventListener('submit', e => {
   e.preventDefault();
   const input = chatInput.value.trim();
   if (!input) return;
   handleUserInput(input);
-
-  // If not an option-based flow, try to answer from KB
-  const hasOptions = !!chatMessages.querySelector('.option-btn');
-  if (!hasOptions) {
-    setTimeout(() => {
-      const kbAnswer = searchKnowledgeBase(input);
-      if (kbAnswer) {
-        addMessage(kbAnswer, 'bot');
-      } else {
-        addMessage("I'm not sure, but I can connect you with a lawyer for more details!", 'bot');
-      }
-    }, 900);
-  }
 });
 
 startApplicationBtn.onclick = () => {

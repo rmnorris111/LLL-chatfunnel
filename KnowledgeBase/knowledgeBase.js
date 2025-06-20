@@ -578,4 +578,4 @@ Showing geographical area with clear boundaries that match written description e
 ---
 
 *This comprehensive knowledge base covers the Land Transport Act 1998 provisions and practical procedures for limited licence applications as at 5 April 2025. It provides complete guidance for both legal analysis and practical application processes.*
-`; 
+`;
