@@ -14,7 +14,7 @@ export default {
     const url = new URL(request.url);
 
     // Handle API requests
-    if (url.pathname === '/api') {
+    if (url.pathname.startsWith('/api')) {
       const origin = request.headers.get('Origin');
       const isAllowed = allowedOrigins.includes(origin);
       const corsHeaders = {
