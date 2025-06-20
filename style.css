@@ -515,6 +515,14 @@ footer {
   .hero-content h1 {
     font-size: 2.1rem;
   }
+  .hero-desc {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  .stats {
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
   .trust-content {
     gap: 1.1rem;
     font-size: 0.98rem;
