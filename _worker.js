@@ -1,0 +1,113 @@
+// _worker.js
+
+import systemPrompt from './limited_licence_chatbot_prompt.md';
+import knowledgeBase from './KnowledgeBase/knowledgeBase.js';
+
+const allowedOrigins = [
+  'https://lll-chatfunnel.pages.dev',
+  'https://ai.limitedlicencelawyer.co.nz',
+  'https://limitedlicencelawyer.co.nz',
+];
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+
+    // Handle API requests
+    if (url.pathname === '/api') {
+      const origin = request.headers.get('Origin');
+      const isAllowed = allowedOrigins.includes(origin);
+      const corsHeaders = {
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        ...(isAllowed && { 'Access-Control-Allow-Origin': origin }),
+      };
+
+      // Handle CORS preflight requests
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { headers: corsHeaders });
+      }
+
+      // Handle POST requests to the API
+      if (request.method === 'POST') {
+        try {
+          const { messages } = await request.json();
+          const apiKey = env.OPENAI_API_KEY;
+
+          if (!apiKey) {
+            throw new Error('OPENAI_API_KEY is not configured.');
+          }
+
+          const responseFromAI = await callOpenAI(messages, systemPrompt, knowledgeBase, apiKey);
+
+          return new Response(JSON.stringify({ reply: responseFromAI }), {
+            headers: {
+              'Content-Type': 'application/json',
+              ...corsHeaders,
+            },
+          });
+        } catch (error) {
+          console.error('Error processing request:', error);
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              ...corsHeaders,
+            },
+          });
+        }
+      }
+
+      // Return a 405 for other methods on /api
+      return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+    }
+
+    // For all other requests, serve the static assets.
+    // This will serve index.html, script.js, style.css, etc.
+    return env.ASSETS.fetch(request);
+  },
+};
+
+/**
+ * Calls the OpenAI API with the user's message history and the knowledge base.
+ * @param {Array} messages - The chat history between the user and the AI.
+ * @param {string} systemPrompt - The initial system prompt.
+ * @param {string} knowledgeBase - The knowledge base content.
+ * @param {string} apiKey - The OpenAI API key.
+ * @returns {string} The AI's response message.
+ */
+async function callOpenAI(messages, systemPrompt, knowledgeBase, apiKey) {
+  const fullSystemPrompt = `${systemPrompt}\n\nHere is the knowledge base you must use to answer questions:\n\n${knowledgeBase}`;
+
+  const body = {
+    model: 'gpt-3.5-turbo',
+    messages: [
+      { role: 'system', content: fullSystemPrompt },
+      ...messages,
+    ],
+    max_tokens: 1024,
+    temperature: 0.2,
+  };
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`OpenAI API error: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+
+  const data = await response.json();
+
+  if (!data.choices || data.choices.length === 0) {
+    throw new Error('Invalid response structure from OpenAI API.');
+  }
+
+  return data.choices[0].message.content;
+} 
