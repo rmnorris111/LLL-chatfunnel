@@ -152,20 +152,25 @@ async function handleUserInput(input) {
       "file your application",
       "start your limited licence application online",
       "begin your application online",
-      "proceed with the application"
+      "proceed with the application",
+      "get started",
+      "application online",
+      "ready to begin",
+      "start the process",
+      "let's do it"
     ];
 
+    const lowerResponse = cleanResponse.toLowerCase();
+
     if (placeholders && !nonPlaceholderText) {
-      // Response contains only one or more placeholders, render as standalone buttons
       addActionButtons(placeholders);
     } else if (
-      startAppTriggers.some(trigger => cleanResponse.toLowerCase().includes(trigger)) &&
-      !(cleanResponse.includes('[ACTION_START_APP]'))
+      startAppTriggers.some(trigger => lowerResponse.includes(trigger)) ||
+      (lowerResponse.includes("application") && lowerResponse.includes("online")) ||
+      (lowerResponse.includes("proceed") && lowerResponse.includes("application"))
     ) {
-      // Fallback: show the Start Application button if trigger phrases are present
       addActionButtons(['[ACTION_START_APP]']);
     } else {
-      // Response contains text, render it inside a bubble (with inline button replacement)
       addMessage(aiResponse, 'bot');
     }
 
